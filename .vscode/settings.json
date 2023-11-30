@@ -1,0 +1,28 @@
+{
+  "python.linting.enabled": true,
+  "python.languageServer": "Pylance",
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportMissingModuleSource": "none"
+  },
+  "micropico.syncFolder": "",
+  "micropico.openOnStart": true,
+  "python.analysis.typeshedPaths": [".vscode\\Pico-W-Stub"],
+  "python.analysis.extraPaths": [
+    "c:\\Users\\carrb\\.vscode\\extensions\\joedevivo.vscode-circuitpython-0.1.20-win32-x64\\boards\\0x239A\\0x8120",
+    "c:\\Users\\carrb\\.vscode\\extensions\\joedevivo.vscode-circuitpython-0.1.20-win32-x64\\stubs",
+    "c:\\Users\\carrb\\AppData\\Roaming\\Code\\User\\globalStorage\\joedevivo.vscode-circuitpython\\bundle\\20231124\\adafruit-circuitpython-bundle-py-20231124\\lib",
+    ".vscode\\Pico-W-Stub"
+  ],
+  "circuitpython.board.version": null,
+  "circuitpython.board.vid": "0x239A",
+  "circuitpython.board.pid": "0x8120",
+  "emeraldwalk.runonsave": {
+    "commands": [
+      {
+        "match": "src\\.*",
+        "cmd": "py scripts\\sync.py"
+      }
+    ]
+  }
+}
