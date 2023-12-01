@@ -1,7 +1,7 @@
 ## Order Of Items To Complete
 
 - [ ] Define Program Logic
-- [ ] Define Button Input Logic
+- [x] Define Button Input Logic
 - [ ] Connect TRS Female
 - [ ] Connect MIDI Module
 - [ ] Connect LCD
@@ -87,8 +87,7 @@ Button Press Variations: single_press, double_press, hold
       return
     return
 
-  # TODO On Metronome Hold, Stop Metronome and stop triggering MIDI events (release control to the HELIX)
-  # TODO What happens if helix has loop running and we start a new metronome?
+  # TODO What happens if helix has loop running and we start a new metronome? A: Trigger an immediate stop event to the helix. The helix will stop playing when a metronome starts.
 
   def PLUS_PRESS():
     if mode === 'settings':
@@ -126,13 +125,18 @@ Button Press Variations: single_press, double_press, hold
 CC_RECORD_OVERDUB = 60
 CC_PLAY_STOP = 61
 CC_PLAY_ONCE = 62
+CC_LOOPER_BLOCK = 67
+CC_TAP_TEMPO = 64
 
-# # MIDI Control Volues
+# # MIDI Control Volues 0-63, 64-127
 MIDI_RECORD = 80
 MIDI_OVERDUB = 40
 MIDI_PLAY = 80
 MIDI_STOP = 40
 MIDI_PLAY_ONCE = 80
+MIDI_LOOPER_BLOCK_ON = 80
+MIDI_LOOPER_BLOCK_OFF = 40
+MIDI_TAP_TEMPO = 80 # Should this be the new tempo???
 
 # # MIDI Data
 # # Helix Documentation: https://helixhelp.com/tips-and-guides/universal/midi
