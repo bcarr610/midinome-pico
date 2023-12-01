@@ -97,6 +97,7 @@ class Metronome:
           self.on_offbeat()
 
   def record_beat(self):
+    print('Received')
     if len(self.last_x_recording_timestamps) + 1 < self.detect_bpm_from_last:
       # Record beat
       self.last_x_recording_timestamps.append(time.monotonic())
