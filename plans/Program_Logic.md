@@ -10,57 +10,51 @@
 
 **Cut Time** - Cut time is Half-Time, Standard-Time and Double-Time. This does not affect the Trigger Loop, only the Metronome Loop.
 
-## Input Event Summary By Mode
+# Input Logic
 
 ### Live Mode
 
-**Metronome Button**
-
-- **Single Press**: Record Beat / Toggle Audio
-- **Double Press**: Change Time Signature _(Only when beat not running)_
-- **Triple Press**: Enter BPM Manually _(Only when beat not running)_
-- **Hold**: Stop Midinome _(Stop the Metronome Loop, Metronome Audio and Trigger Loop, does not stop the Helix Loop)_
-
-**Trigger Button**
-
-- **Single Press**:
-  - Trigger Record Start/Record Stop on next beat _(If Trigger Loop has not been created or has been destroyed.)_
-  - Trigger Play/Stop on next beat _(If Trigger Loop is currently running.)_
-- **Double Press**: Play/Stop on next downbeat
-- **Triple Press**: Play/Stop on next phrase
-- **Hold**: Stop/Clear Loop
-
-**+ Button**: Increment Cut Time
-**- Button**: Decrement Cut Time
+- **Metronome Button**
+  - **Single Press**: Record Beat / Toggle Audio
+  - **Double Press**: Change Time Signature _(Only when beat not running)_
+  - **Triple Press**: Enter BPM Manually _(Only when beat not running)_
+  - **Hold**: Stop Midinome _(Stop the Metronome Loop, Metronome Audio and Trigger Loop, does not stop the Helix Loop)_
+- **Trigger Button**
+  - **Single Press**:
+    - Trigger Record Start/Record Stop on next beat _(If Trigger Loop has not been created or has been destroyed.)_
+    - Trigger Play/Stop on next beat _(If Trigger Loop is currently running.)_
+  - **Double Press**: Play/Stop on next downbeat
+  - **Triple Press**: Play/Stop on next phrase
+  - **Hold**: Stop/Clear Loop
+- **+ Button**: Increment Cut Time
+- **- Button**: Decrement Cut Time
 
 ### Config Mode
 
-**Metronome Button**: Select/Confirm
-**Trigger Button**: Cancel/Back
-**+ Button**: Up/Increment
-**- Button**: Down/Decrement
+- **Metronome Button**: Select/Confirm
+- **Trigger Button**: Cancel/Back
+- **+ Button**: Up/Increment
+- **- Button**: Down/Decrement
 
 ### Time Signature Mode
 
-**Metronome Button**: Confirm
-**Trigger Button**: Next
-**+ Button**: Increment
-**- Button**: Decrement
+- **Metronome Button**: Confirm
+- **Trigger Button**: Next
+- **+ Button**: Increment
+- **- Button**: Decrement
 
 ### Manual BPM Mode
 
-**Metronome Button**: Confirm And Start
-**Trigger Button**: Cancel
-**+ Button**
+- **Metronome Button**: Confirm And Start
+- **Trigger Button**: Cancel
+- **+ Button**
+  - **Single Press**: Increase By 1
+  - **Hold**: Increase By 20
+- **- Button**
+  - **Single Press**: Decrease By 1
+  - **Hold**: Decrease By 20
 
-- **Single Press**: Increase By 1
-- **Hold**: Increase By 20
-  **- Button**
-- **Single Press**: Decrease By 1
-- **Hold**: Decrease By 20
-
-## Input Event Program Logic
-
+<!-- ## Input Event Program Logic
 - Buttons
 
   - METRONOME_BUTTON
@@ -115,6 +109,7 @@
       - LIVE_MODE
         - IF Loop Not Running On Midinome
         <!-- Functionality Can Go Here -->
+
         - IF Loop Running On MidiNome
           - IF Playing Loop
             - **( Trigger Stop On Next Down Beat )**
@@ -143,49 +138,49 @@
     - DOUBLE_PRESS
     - HOLD -->
 
-  - PLUS_BUTTON
+- PLUS_BUTTON
 
-    - SINGLE_PRESS
+  - SINGLE_PRESS
 
-      - LIVE_MODE
-        **( Increase to standard time or double time )**
+    - LIVE_MODE
+      **( Increase to standard time or double time )**
 
-      - CONFIG_MODE
-        **( UP/Increment )**
+    - CONFIG_MODE
+      **( UP/Increment )**
 
-      - TIME_SIGNATURE_MODE
-        **( Selection Decrement )**
+    - TIME_SIGNATURE_MODE
+      **( Selection Decrement )**
 
-      - MANUAL_BPM_MODE
-        **( Increase BPM By 1 )**
+    - MANUAL_BPM_MODE
+      **( Increase BPM By 1 )**
 
-    - DOUBLE_PRESS
-    <!-- Functionality Can Go Here -->
-    - HOLD
-      - MANUAL_BPM_MODE
-        **( Increase BPM By 20 )**
+  - DOUBLE_PRESS
+  <!-- Functionality Can Go Here -->
+  - HOLD
+    - MANUAL_BPM_MODE
+      **( Increase BPM By 20 )**
 
-  - MINUS_BUTTON
+- MINUS_BUTTON
 
-    - SINGLE_PRESS
+      - SINGLE_PRESS
 
-      - LIVE_MODE
-        **( Decrease to standard time or half time )**
+        - LIVE_MODE
+          **( Decrease to standard time or half time )**
 
-      - CONFIG_MODE
-        **( DOWN/Decrement )**
+        - CONFIG_MODE
+          **( DOWN/Decrement )**
 
-      - TIME_SIGNATURE_MODE
-        **( Selection Decrement )**
+        - TIME_SIGNATURE_MODE
+          **( Selection Decrement )**
 
-      - MANUAL_BPM_MODE
-        **( Decrease BPM By 1 )**
+        - MANUAL_BPM_MODE
+          **( Decrease BPM By 1 )**
 
-    - DOUBLE_PRESS
-    <!-- Functionality Can Go Here -->
+      - DOUBLE_PRESS
+      <!-- Functionality Can Go Here -->
 
-    - HOLD
-      - MANUAL_BPM_MODE
-        **( Increase BPM By 20 )**
+      - HOLD
+        - MANUAL_BPM_MODE
+          **( Increase BPM By 20 )**
 
-## Program Event Loop
+  -->
