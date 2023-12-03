@@ -4,7 +4,7 @@
 - [ ] Connect TRS Female
 - [ ] Connect MIDI Module
 - [ ] Connect LCD
-- [ ] Build Button Logic To Handle Button Combinations and not bloat the Event loop with multiple checks.
+- [x] Build Button Logic To Handle Button Combinations and not bloat the Event loop with multiple checks.
 - [ ] Build Metronome Class
 - [ ] Build MIDI Trigger Class
 - [ ] Build LCD Display Class And Screens/Navigation

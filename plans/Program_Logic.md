@@ -14,45 +14,45 @@
 
 ### Live Mode
 
-- **Metronome Button**
-  - **Single Press**: Record Beat / Toggle Audio
-  - **Double Press**: Change Time Signature _(Only when beat not running)_
-  - **Triple Press**: Enter BPM Manually _(Only when beat not running)_
-  - **Hold**: Stop Midinome _(Stop the Metronome Loop, Metronome Audio and Trigger Loop, does not stop the Helix Loop)_
-- **Trigger Button**
-  - **Single Press**:
-    - Trigger Record Start/Record Stop on next beat _(If Trigger Loop has not been created or has been destroyed.)_
-    - Trigger Play/Stop on next beat _(If Trigger Loop is currently running.)_
-  - **Double Press**: Play/Stop on next downbeat
-  - **Triple Press**: Play/Stop on next phrase
-  - **Hold**: Stop/Clear Loop
-- **+ Button**: Increment Cut Time
-- **- Button**: Decrement Cut Time
+<!-- Removing Cut Time, May Implement Later -->
+
+- **Metronome Button**: Record Beat / Toggle Audio
+- **Trigger Button**:
+  - When No Trigger Loop: **Record Start/Record Stop on next {record_on_default}**
+  - When There is an active Trigger Loop: **Play/Stop on next {trigger_on_default}**
+- **Control Button**: Switches To Live Alt Mode Until Control Pressed again
+- **+- Button**: Switches to Config Mode
+
+### Live Alt Mode
+
+Once Control Is Pressed and you enter Live Alt Mode, you will stay in live alt mode until config.live_alt_timeout passes without pressing another button (this will cancel any current combos). Or the control button is pressed again (This will confirm the combination)
+**Change Time Signature**: Metronome X 1
+**Enter Manual BPM**: Metronome X 2
+**Destroy Metronome and Trigger Loop (Release Control To Helix)**: Metronome X 1 + Trigger X 1
+**Play/Stop on next downbeat**: Trigger X 1
+**Play/Stop on next phrase**: Trigger X 2
+**Cancel And Go Back to Live Mode**: Control Button
 
 ### Config Mode
 
 - **Metronome Button**: Select/Confirm
 - **Trigger Button**: Cancel/Back
-- **+ Button**: Up/Increment
-- **- Button**: Down/Decrement
+- **Control Button**: Up/Increment
+- **+- Button**: Down/Decrement
 
 ### Time Signature Mode
 
 - **Metronome Button**: Confirm
 - **Trigger Button**: Next
-- **+ Button**: Increment
-- **- Button**: Decrement
+- **Control Button**: Increment
+- **+- Button**: Decrement
 
 ### Manual BPM Mode
 
 - **Metronome Button**: Confirm And Start
 - **Trigger Button**: Cancel
-- **+ Button**
-  - **Single Press**: Increase By 1
-  - **Hold**: Increase By 20
-- **- Button**
-  - **Single Press**: Decrease By 1
-  - **Hold**: Decrease By 20
+- **Control Button**: Increase
+- **+- Button**: Decrease
 
 <!-- ## Input Event Program Logic
 - Buttons
