@@ -342,7 +342,6 @@ class Midinome:
           # Start on next x
         # Else
           # Stop on next x
-
       pass
     elif self.mode == modes['command']:
       self.current_button_combo.append(buttons['trigger'])
