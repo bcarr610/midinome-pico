@@ -1,0 +1,11 @@
+{
+  "CMD Mode Timeout": 0.5,
+  "BTN Debounce": 0.2,
+  "TRG RCD On": "beat",
+  "TRG P/S On": "beat",
+  "Time Signature": [
+    4,
+    4
+  ],
+  "Helix LAT Offset MS": 0
+}

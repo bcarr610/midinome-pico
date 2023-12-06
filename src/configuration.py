@@ -1,4 +1,5 @@
-import board, os, json
+import board, json
+from utils import path_exists
 
 # __CONSTANTS__
 buttons = {
@@ -16,20 +17,42 @@ modes = {
   'manual_bpm': 'manual_bpm'
 }
 
+trigger_on = {
+  'Beat': 'Beat',
+  'Downbeat': 'Downbeat',
+  'Phrase': 'Phrase'
+}
+
 # __CONFIGURATION__
 app_config = {
   'program_tick_speed': 0,
   'audio_dir': 'audio',
   'downbeat_file_path': 'audio/downbeat.wav',
   'offbeat_file_path': 'audio/offbeat.wav',
-  'user_config_path': 'user.config.json',
+  'user_config_path': 'user-config.json',
+  'helix': {
+    'uart': {
+      'tx': board.GP0,
+      'rx': board.GP1
+    },
+    'midi_signals': {
+      'record': (60, 80),
+      'overdub': (60, 40),
+      'play': (61, 80),
+      'stop': (61, 40),
+      'looper_block_on': (67, 80),
+      'looper_block_off': (67, 40),
+      'tap_tempo': (64, 80)
+    }
+  },
   'gpio': {
     'board_led': board.LED,
     'audio_out': board.GP14,
-    'metronome_button': board.GP1,
-    'trigger_button': board.GP2,
-    'command_button': board.GP3,
-    'plus_minus_button': board.GP4
+    'metronome_button': board.GP2,
+    'trigger_button': board.GP3,
+    'command_button': board.GP4,
+    'plus_minus_button': board.GP5,
+    'test_button': board.GP6,
   }
 }
 
@@ -38,14 +61,15 @@ class UserConfig:
   default_config = {
     'CMD Mode Timeout': 0.5,
     'BTN Debounce': 0.2,
-    'TRG RCD Default': 'Beat',
-    'TRG P/S Default': 'Beat',
-    'Time SIG Default': (4, 4)
+    'TRG RCD On': trigger_on['Beat'],
+    'TRG P/S On': trigger_on['Beat'],
+    'Time Signature': (4, 4),
+    'Helix LAT Offset MS': 0
   }
   
   def __init__(self):
     print('Initializing User Config')
-    if not os.path.exists(app_config['user_config_path']):
+    if not path_exists(app_config['user_config_path']):
       self.config = self.create_new_config()
     else:
       should_write_new_file = False

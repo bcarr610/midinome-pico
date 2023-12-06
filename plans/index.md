@@ -1,12 +1,12 @@
 ## Order Of Items To Complete
 
 - [x] Define Button Input Logic
-- [ ] Connect TRS Female
-- [ ] Connect MIDI Module
+- [x] Connect TRS Female
+- [x] Connect MIDI Module
 - [ ] Connect LCD
 - [x] Build Button Logic To Handle Button Combinations and not bloat the Event loop with multiple checks.
-- [ ] Build Metronome Class
-- [ ] Build MIDI Trigger Class
+- [x] Build Metronome Class
+- [x] Build MIDI Trigger Class
 - [ ] Build LCD Display Class And Screens/Navigation
 - [ ] Map Primary Loop To Handle Metronome, MIDI and LCD classes
 - [ ] Map Buttons to Button Input Logic

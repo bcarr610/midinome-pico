@@ -13,7 +13,8 @@ board_ignore_paths = [
   '.metadata_never_index',
   '.Trashes',
   'boot_out.txt',
-  'settings.toml'
+  'settings.toml',
+  'user-config.json'
 ]
 
 local_sync_dir = 'src'
@@ -41,10 +42,13 @@ def get_items_from_dir(dir_path: str):
 def copy_item(from_path: str, to_path: Optional[str] = None):
   from_path = from_path.replace('\\', '/')
   to_path = to_path.replace('\\', '/') if to_path else None
+
+  print(from_path)
+  print(to_path)
   
   if to_path:
     print(f'Copying {from_path} to {to_path}...')
-    shutil.copy(from_path, to_path)
+    shutil.copyfile(from_path, to_path)
   else:
     creation_list = from_path.split('/')
 
@@ -58,7 +62,7 @@ def copy_item(from_path: str, to_path: Optional[str] = None):
       current_path = current_path + '/' + pth
       if index == len(creation_list) - 1:
         print(f'Copying {from_path} to {current_path}...')
-        shutil.copy(from_path, current_path)
+        shutil.copyfile(from_path, current_path)
         break
       else:
         if not os.path.exists(current_path):
@@ -91,11 +95,13 @@ for local_file in local_dir:
 
   if found_file == False:
     copy_item(local_file['path'])
-    # shutil.copy(local_file['path'])
+    # shutil.copyfile(local_file['path'])
     pass
   else:
     last_modified_on_board = get_last_modified_time(found_file['path'])
     last_modified_on_local = get_last_modified_time(local_file['path'])
     if last_modified_on_local > last_modified_on_board:
       print(f'Updating {found_file["file"]}...')
-      shutil.copy(local_file['path'], found_file['path'])
+      copy_item(local_file['path'], found_file['path'])
+
+copy_item('.\\user-config.json', 'D:/user-config.json')

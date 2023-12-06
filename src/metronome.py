@@ -5,8 +5,6 @@ from configuration import app_config
 from utils import noop
 
 class Metronome:
-  downbeat_sound = app_config['downbeat_file_path']
-  offbeat_sound = app_config['downbeat_file_path']
   bpm = 0
   # CONVERT SOME OF THESE INTO USER/APPCONFIG
   detect_bpm_from_last = 4
@@ -28,6 +26,9 @@ class Metronome:
     self.on_beat = on_beat
     self.on_bpm_change = on_bpm_change
     self.audio = AudioOut(audio_out_pin)
+
+    self.downbeat_file = open(app_config['downbeat_file_path'], 'rb')
+    self.offbeat_file = open(app_config['offbeat_file_path'], 'rb')
 
   def start(self):
     self.is_on = True
@@ -52,12 +53,8 @@ class Metronome:
     if self.current_beat > beats_per_measure:
       self.current_beat = 1
 
-  def play_sound(self, filename):
-    with open(filename, "rb") as wave_file:
-      wave = WaveFile(wave_file)
-      self.audio.play(wave)
-      while self.audio.playing:
-        pass
+  def play_sound(self, wav):
+    self.audio.play(wav)
 
   def tick(self):
     # Manage Beat State
@@ -72,42 +69,32 @@ class Metronome:
     # Stop Recording BPM
     if len(self.last_x_recording_timestamps):
       if (time.monotonic() - self.last_x_recording_timestamps[-1] > self.stop_recording_after):
-        print("Recording Stopped")
         self.last_x_recording_timestamps = []
 
     # Emit Sound and events
     if self.ready_to_emit:
+      now = time.monotonic()
       self.ready_to_emit = False
-      print('Beat')
       
       # Emit Sound
       if self.should_emit_sound:
-        print('Emitting Sound')
-        sound = self.downbeat_sound if self.current_beat == self.time_signature[0] else self.offbeat_sound
-        self.play_sound(sound)  
+        wave_file = self.offbeat_file if self.current_beat == self.time_signature[0] else self.downbeat_file
+        wav = WaveFile(wave_file)
+        self.play_sound(wav)
 
       # Emit Events
       if self.should_emit_events:
-        print('Emitting Event')
-        self.on_beat()
-        if self.current_beat == self.time_signature[0]:
-          self.on_downbeat()
-        else:
-          self.on_offbeat()
+        self.on_beat(self.current_beat == self.time_signature[0])
 
   def record_beat(self):
-    print('Received')
     if len(self.last_x_recording_timestamps) + 1 < self.detect_bpm_from_last:
-      # Record beat
       self.last_x_recording_timestamps.append(time.monotonic())
-      print(len(self.last_x_recording_timestamps))
-      print(self.detect_bpm_from_last)
     else:
-      # Set BPM
       differences = [self.last_x_recording_timestamps[i + 1] - self.last_x_recording_timestamps[i] for i in range(len(self.last_x_recording_timestamps) - 1)]
       average_diff = sum(differences) / len(differences) if differences else 0
       self.bpm = round(60 / average_diff) if average_diff != 0 else 0
       self.last_x_recording_timestamps = []
+      self.last_beat_at = time.monotonic()
       self.trigger_bpm_change(self.bpm)
 
       # Start Emitting if first time recording
@@ -116,6 +103,9 @@ class Metronome:
 
       if self.should_emit_sound == None:
         self.should_emit_sound = True
+
+      if self.should_emit_events == None:
+        self.should_emit_events = True
 
   def trigger_bpm_change(self, value):
     self.on_bpm_change(value)
