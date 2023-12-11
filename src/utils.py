@@ -14,6 +14,11 @@ def send_midi_signal(uart, cc, value, midi_channel=0):
   status_byte = 0xB0 + midi_channel
   uart.write(bytes([status_byte, cc, value]))
 
+def time_until_next_beat(last_beat_at, bpm):
+  pass
+
+def time_until_new_phrase(beats_in_phrase, current_beat, last_beat_at, bpm):
+  pass
 
 class TimeTracker:
   def __init__(self, label='Process'):

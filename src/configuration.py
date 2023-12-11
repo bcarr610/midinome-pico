@@ -18,6 +18,7 @@ modes = {
 }
 
 trigger_on = {
+  'Instant': 'Instant',
   'Beat': 'Beat',
   'Downbeat': 'Downbeat',
   'Phrase': 'Phrase'
@@ -29,7 +30,7 @@ app_config = {
   'audio_dir': 'audio',
   'downbeat_file_path': 'audio/downbeat.wav',
   'offbeat_file_path': 'audio/offbeat.wav',
-  'user_config_path': 'user-config.json',
+  'user_config_path': 'user_config.env',
   'helix': {
     'uart': {
       'tx': board.GP0,
@@ -40,6 +41,7 @@ app_config = {
       'overdub': (60, 40),
       'play': (61, 80),
       'stop': (61, 40),
+      'play_once': (62, 80),
       'looper_block_on': (67, 80),
       'looper_block_off': (67, 40),
       'tap_tempo': (64, 80)
@@ -61,14 +63,16 @@ class UserConfig:
   default_config = {
     'CMD Mode Timeout': 0.5,
     'BTN Debounce': 0.2,
-    'TRG RCD On': trigger_on['Beat'],
-    'TRG P/S On': trigger_on['Beat'],
+    'TRG RCD Start On': trigger_on['Beat'],
+    'TRG RCD Stop On': trigger_on['Beat'],
+    'TRG Play On': trigger_on['Beat'],
+    'TRG Stop On': trigger_on['Beat'],
+    'Loop After RCD': True,
     'Time Signature': (4, 4),
     'Helix LAT Offset MS': 0
   }
   
   def __init__(self):
-    print('Initializing User Config')
     if not path_exists(app_config['user_config_path']):
       self.config = self.create_new_config()
     else:

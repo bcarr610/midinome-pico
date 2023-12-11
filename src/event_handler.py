@@ -2,6 +2,8 @@ import time
 from configuration import modes, buttons, trigger_on
 
 HelixEvent = {
+  'rcd_start_instant': 'rcd_start_instant',
+  'rcd_stop_instant': 'rcd_stop_instant',
   'rcd_start_next_beat': 'rcd_start_next_beat',
   'rcd_stop_next_beat': 'rcd_stop_next_beat',
   'rcd_start_next_downbeat': 'rcd_start_next_downbeat',
@@ -19,100 +21,48 @@ class EventHandler:
     self.midinome = midinome
 
     # Helix Loop State
-    self.is_counting_beats_in_phrase = False
-    self.current_beat_in_phrase = 0
-    self.beats_in_phrase = 0
     self.next_helix_event = None
     self.helix_trigger_loop_running = False
-    self.helix_is_recording = False
-    self.ready_to_trigger_relooop = False
-    # FOR TESTING
-    self.log_at = time.monotonic()
 
   def __get_helix_event_from_snap(self, record_or_play, start_or_stop):
     # TODO Optimize this state, this is a lot of logic for simple state update
-    trigger_rcd_on = self.midinome.user_config.config['TRG RCD On']
-    trigger_ps_on = self.midinome.user_config.config['TRG P/S On']
+    trigger_rcd_start_on = self.midinome.user_config.config['TRG RCD Start On']
+    trigger_rcd_stop_on = self.midinome.user_config.config['TRG RCD Stop On']
+    trigger_play_on = self.midinome.user_config.config['TRG Play On']
+    trigger_stop_on = self.midinome.user_config.config['TRG Stop On']
     if record_or_play == 'record':
       if start_or_stop == 'start':
-        if trigger_rcd_on == trigger_on['Downbeat']:
+        if trigger_rcd_start_on == trigger_on['Instant']:
+          return HelixEvent['rcd_start_instant']
+        elif trigger_rcd_start_on == trigger_on['Downbeat']:
           return HelixEvent['rcd_start_next_downbeat']
         else:
           return HelixEvent['rcd_start_next_beat']
       else:
-        if trigger_rcd_on == trigger_on['Downbeat']:
+        if trigger_rcd_stop_on == trigger_on['Instant']:
+          return HelixEvent['rcd_stop_instant']
+        elif trigger_rcd_stop_on == trigger_on['Downbeat']:
           return HelixEvent['rcd_stop_next_downbeat']
         else:
           return HelixEvent['rcd_stop_next_beat']
     else:
       if start_or_stop == 'start':
-        if trigger_ps_on == trigger_on['Phrase']:
+        if trigger_play_on == trigger_on['Phrase']:
           return HelixEvent['play_next_phrase']
-        elif trigger_ps_on == trigger_on['Downbeat']:
+        elif trigger_play_on == trigger_on['Downbeat']:
           return HelixEvent['play_next_downbeat']
         else:
           return HelixEvent['play_next_beat']
       else:
-        if trigger_ps_on == trigger_on['Phrase']:
+        if trigger_stop_on == trigger_on['Phrase']:
           return HelixEvent['stop_next_phrase']
-        elif trigger_ps_on == trigger_on['Downbeat']:
+        elif trigger_stop_on == trigger_on['Downbeat']:
           return HelixEvent['stop_next_downbeat']
         else:
           return HelixEvent['stop_next_beat']
 
-  
-  def tick(self):
-    # Fire Reloop
-    if self.ready_to_trigger_relooop:
-      self.ready_to_trigger_relooop = None
-      self.midinome.helix.stop()
-      self.midinome.helix.play()
-
-    # Set Reloop Ready State
-    if self.midinome.metronome.bpm > 0 and self.helix_trigger_loop_running:
-      now = time.monotonic()
-      seconds_per_beat = 60 / self.midinome.metronome.bpm
-      last_beat_at = self.midinome.metronome.last_beat_at
-      remaining_time_in_beat = (last_beat_at + seconds_per_beat) - now
-      remaining_time_in_phrase = ((seconds_per_beat * self.beats_in_phrase) - (seconds_per_beat * self.current_beat_in_phrase)) + remaining_time_in_beat
-
-      offset = self.midinome.user_config.config['Helix LAT Offset MS'] / 1000 if self.midinome.user_config.config['Helix LAT Offset MS'] > 0 else 0
-      next_trigger_in = remaining_time_in_phrase - offset
-
-      if next_trigger_in <= 0 and self.ready_to_trigger_relooop == False:
-        self.ready_to_trigger_relooop = True
-  
-  def on_beat(self, is_downbeat):
-    # Prevent duplicate reloop state changes
-    if self.ready_to_trigger_relooop == None:
-      self.ready_to_trigger_relooop = False
-    
-    if not self.helix_is_recording:
-      if (self.next_helix_event == HelixEvent['rcd_start_next_downbeat'] and is_downbeat) or self.next_helix_event == HelixEvent['rcd_start_next_beat']:
-        # Trigger Record and start counting beats in phrases
-        self.helix_is_recording = True
-        self.helix_trigger_loop_running = False
-        self.is_counting_beats_in_phrase = True
-        self.midinome.helix.start_record()
-        pass
-    elif self.helix_is_recording:
-      if (self.next_helix_event == HelixEvent['rcd_stop_next_downbeat'] and is_downbeat) or self.next_helix_event == HelixEvent['rcd_stop_next_beat']:
-        self.helix_is_recording = False
-        self.helix_trigger_loop_running = True
-        self.beats_in_phrase = self.current_beat_in_phrase
-        self.is_counting_beats_in_phrase = False
-        self.midinome.helix.stop_record()
-
-    # Count Beats In Phrase During Recording
-    if self.is_counting_beats_in_phrase:
-      self.current_beat_in_phrase += 1
-    elif self.beats_in_phrase > 0:
-      if self.current_beat_in_phrase >= self.beats_in_phrase:
-        self.current_beat_in_phrase = 1
-      else:
-        self.current_beat_in_phrase += 1
-    
-    print(f'{self.current_beat_in_phrase} / {self.beats_in_phrase}')
+  def on_beat(self, beat_at, is_downbeat):
+    pass
 
   # Program Functions
   def F_Toggle_Metronome_Audio(self):
@@ -125,7 +75,7 @@ class EventHandler:
       print('Metronome Audio [ON]')
 
   def F_Record_Beat(self):
-    print('Recording Beat')
+    print('Beat Recorded')
     self.midinome.metronome.record_beat()
 
   def F_Record_Combo_Press(self, btn):
@@ -158,11 +108,9 @@ class EventHandler:
     pass
 
   def on_test_button(self):
-    print('Test Button Pressed')
-    self.midinome.helix.play()
+    print([ev.event_name for ev in self.midinome.helix.event_queue])
 
   def on_metronome_button(self):
-    print('Metronome Pressed')
     mode = self.midinome.mode
     
     if mode == modes['live']:
@@ -189,32 +137,26 @@ class EventHandler:
       pass
 
   def on_trigger_button(self):
-    print('Trigger Press')
     mode = self.midinome.mode
     metronome_is_on = self.midinome.metronome.is_on
+    is_playing_loop = self.midinome.helix.is_playing
+    has_loop_stored = self.midinome.helix.rcd_duration > 0
+    cfg = self.midinome.user_config.config
 
     if mode == modes['live']:
-      # If no trigger loop and metronome is on
-      if not self.helix_trigger_loop_running and metronome_is_on:
-        # If not recording loop
-        if not self.helix_is_recording:
-          # Record Start on next x
-          self.next_helix_event = self.__get_helix_event_from_snap('record', 'start')
+      if not has_loop_stored and metronome_is_on:
+        if not self.midinome.helix.is_recording:
+          self.midinome.helix.start_recording(cfg['TRG RCD Start On'])
         else:
-          # Record Stop on next x
-          self.next_helix_event = self.__get_helix_event_from_snap('record', 'stop')
-      # Else if trigger loop and metronome is on
-      elif self.helix_trigger_loop_running and metronome_is_on:
-        # If not playing loop
-        if not self.midinome.helix.is_playing_loop:
-          # Start on next x
-          self.next_helix_event = self.__get_helix_event_from_snap('play', 'start')
+          self.midinome.helix.stop_recording(cfg['TRG RCD Stop On'])
+      elif has_loop_stored and metronome_is_on:
+        if not is_playing_loop:
+          self.midinome.helix.start(cfg['TRG Play On'])
         else:
-          # Stop on next x
-          self.next_helix_event = self.__get_helix_event_from_snap('play', 'stop')
+          self.midinome.helix.stop(cfg['TRG Stop On'])
       pass
     elif mode == modes['command']:
-      self.midinome.scurrent_button_combo.append(buttons['trigger'])
+      self.midinome.current_button_combo.append(buttons['trigger'])
       pass
     elif mode == modes['config']:
       # If Currently Editing Config Item

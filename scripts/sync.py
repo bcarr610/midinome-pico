@@ -14,7 +14,7 @@ board_ignore_paths = [
   '.Trashes',
   'boot_out.txt',
   'settings.toml',
-  'user-config.json'
+  'user_config.env'
 ]
 
 local_sync_dir = 'src'
@@ -104,4 +104,4 @@ for local_file in local_dir:
       print(f'Updating {found_file["file"]}...')
       copy_item(local_file['path'], found_file['path'])
 
-copy_item('.\\user-config.json', 'D:/user-config.json')
+copy_item('user_config.env', 'D:user_config.env')

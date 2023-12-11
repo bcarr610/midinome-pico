@@ -14,16 +14,18 @@ class Midinome:
     self.mode = mode
     self.current_button_combo = []
 
-    # Initialize Helix
-    self.helix = Helix()
-
     # Event Handler
     self.event_handler = EventHandler(self)
 
     # Initialize Metronome
-    self.metronome = Metronome(app_config['gpio']['audio_out'])
-    self.metronome.on_beat = self.event_handler.on_beat
-    self.metronome.on_bpm_change = self.event_handler.on_bpm_change
+    self.metronome = Metronome(
+      app_config['gpio']['audio_out'],
+      on_beat=self.on_beat,
+      on_bpm_change=self.on_bpm_change
+    )
+
+    # Initialize Helix
+    self.helix = Helix(self)
 
     # Initialize GPIO
     led = digitalio.DigitalInOut(app_config['gpio']['board_led'])
@@ -64,6 +66,15 @@ class Midinome:
 
     midinome_initialization_tracker.stop()
 
+  def on_beat(self, beat_at, is_downbeat):
+    self.helix.on_beat(beat_at, is_downbeat)
+    self.event_handler.on_beat(beat_at, is_downbeat)
+    pass
+
+  def on_bpm_change(self, value):
+    print(f'BPM Changed to {value}')
+    pass
+
   def run_event_loop_iteration(self):
     self.gpio_input['metronome_button'].check_state()
     self.gpio_input['trigger_button'].check_state()
@@ -71,11 +82,13 @@ class Midinome:
     self.gpio_input['plus_minus_button'].check_state()
     self.gpio_input['test_button'].check_state()
     self.metronome.tick()
-    self.event_handler.tick()
+    self.helix.tick()
   
 midinome = Midinome()
-print('Running')
+midinome.metronome.__start_metronome(60)
+print('Program Running')
 
 while True:
   midinome.run_event_loop_iteration()
-  time.sleep(app_config['program_tick_speed'] / 1000 if app_config['program_tick_speed'] > 0 else 0)
+  if app_config['program_tick_speed'] > 0:
+    time.sleep(app_config['program_tick_speed'])
